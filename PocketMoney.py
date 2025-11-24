@@ -5,10 +5,7 @@ CATEGORIES = ["Bills / Utilities", "Gas / Transportation", "Groceries / Necessit
 BUDGETS_FILE = "budgets.csv"
 PURCHASES_FILE = "purchases.csv"
 
-# --------------------------
 # CSV helper functions
-# --------------------------
-
 def load_budgets():
     # Read budgets.csv and return a dict {category: budget}
     budgets = {cat: 0.0 for cat in CATEGORIES}
@@ -16,7 +13,7 @@ def load_budgets():
     try:
         with open(BUDGETS_FILE, newline="") as f:
             reader = csv.reader(f)
-            header = next(reader, None)  # skip header
+            header = next(reader, None) # skip header
             for row in reader:
                 if len(row) >= 2:
                     cat = row[0]
@@ -41,7 +38,6 @@ def save_budgets(budgets):
         for cat in CATEGORIES:
             writer.writerow([cat, budgets.get(cat, 0.0)])
 
-
 def add_purchase_to_csv(category, amount):
     # Append one purchase to purchases.csv
     file_exists = os.path.exists(PURCHASES_FILE)
@@ -52,7 +48,6 @@ def add_purchase_to_csv(category, amount):
         if write_header:
             writer.writerow(["category", "amount"])
         writer.writerow([category, amount])
-
 
 def load_spending():
     # Read purchases.csv and return a dict {category: total_spent}
@@ -76,58 +71,48 @@ def load_spending():
 
     return spending
 
-# --------------------------
 # User interface helpers
-# --------------------------
-
 def display_menu():
     print("\nMenu:")
     print("1. Log a purchase")
     print("2. Set / update monthly budget")
     print("3. View budget")
-    print("4. Reset for new month (HARD RESET)")
-    print("5. Exit")
-
+    print("4. Add budget group")
+    print("5. Reset for new month (HARD RESET)")
+    print("6. Exit")
 
 def get_user_choice():
-    choice = input("Please select an option (1-5): ")
+    choice = input("Please select an option (1-6): ")
     return choice
-
 
 def display_categories():
     print("\nChoose a category:")
     for i, cat in enumerate(CATEGORIES, start=1):
         print(str(i) + ". " + cat)
 
-
 def get_category_choice():
-    display_categories()
-    choice = input("Select a category (1-" + str(len(CATEGORIES)) + "): ")
+    while(True):
+        display_categories()
+        choice = input("Select a category (1-" + str(len(CATEGORIES)) + "): ")
 
-    try:
-        index = int(choice) - 1
-        if 0 <= index < len(CATEGORIES):
-            return CATEGORIES[index]
-    except:
-        pass
+        try:
+            index = int(choice) - 1
+            if 0 <= index < len(CATEGORIES):
+                return CATEGORIES[index]
+        except:
+            pass
 
-    print("Invalid category. Using 'Bills' by default.")
-    return "Bills"
-
-# --------------------------
 # Main features
-# --------------------------
-
 def setup_first_time():
     # Run when this is the first time or after a hard reset
-    print("Welcome to the Budget App!")
+    print("Welcome to Pocket Money!")
     print("Let's set up your monthly budget.")
 
     total_str = input("How much money do you have for this month? ")
     try:
         total = float(total_str)
     except:
-        total = 0.0
+       total = 0.0
 
     budgets = {}
     remaining = total
@@ -154,7 +139,6 @@ def setup_first_time():
     print("\nInitial budgets saved.")
     return budgets
 
-
 def log_purchase():
     # Log one or more purchases
     while True:
@@ -175,7 +159,6 @@ def log_purchase():
         if more != "y":
             break
 
-
 def set_monthly_budget(budgets):
     # Update the budget for one category
     category = get_category_choice()
@@ -192,7 +175,6 @@ def set_monthly_budget(budgets):
     except:
         print("Invalid amount. Please enter a number.")
 
-
 def view_budget(budgets):
     # Show budget, spent, and percent for each category
     spending = load_spending()
@@ -206,19 +188,15 @@ def view_budget(budgets):
         else:
             percent = 0.0
 
-        # Example: Shopping $100.00/150.00 - 66.67%
         line = (
-            cat + " $" +
-            "{:.2f}".format(spent) + "/" +
-            "{:.2f}".format(budget) +
-            " - " +
+            cat + " $" + "{:.2f}".format(spent) + "/" +
+            "{:.2f}".format(budget) + " - " +
             "{:.2f}".format(percent) + "%"
         )
-        print(line)
-
+        print(line) # Example: Shopping $100.00/150.00 - 66.67%
 
 def reset_database():
-    # Hard reset: delete CSV files and start fresh like a brand new month
+    # Hard reset: delete CSV files and start fresh (new month)
     print("\nRESET FOR NEW MONTH (HARD RESET)")
     print("This will DELETE all budgets and all purchases and start over.")
     confirm = input("Are you sure you want to reset? (y/n): ").lower()
@@ -248,10 +226,7 @@ def reset_database():
     print("New month setup complete.")
     return new_budgets
 
-# --------------------------
 # Main loop
-# --------------------------
-
 def main():
     budgets = load_budgets()
 
@@ -271,15 +246,17 @@ def main():
         elif choice == "3":
             view_budget(budgets)
         elif choice == "4":
+            pass
+        elif choice == "5":
             # HARD RESET
             new_budgets = reset_database()
             if new_budgets is not None:
                 budgets = new_budgets
-        elif choice == "5":
+        elif choice == "6":
             print("Goodbye!")
             running = False
         else:
-            print("Invalid choice. Please select 1-5.")
+            print("Invalid choice. Please select 1-6.")
 
 # Start the program
 main()
