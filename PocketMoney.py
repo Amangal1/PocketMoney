@@ -1,7 +1,7 @@
 import csv
 import os
 
-CATEGORIES = ["Bills", "Gas", "Entertainment", "Shopping"]
+CATEGORIES = ["Bills / Utilities", "Gas / Transportation", "Groceries / Necessities", "Shopping / Non-Necessities", "Memberships / subscriptions"]
 BUDGETS_FILE = "budgets.csv"
 PURCHASES_FILE = "purchases.csv"
 
